@@ -1,0 +1,31 @@
+services:
+  app:
+    build: .
+    ports:
+      - "8000:8000"
+    environment:
+      DATABASE_URL: postgresql+psycopg://forex:forex@db:5432/forex_intelligence
+      APP_ENV: development
+      LOG_LEVEL: INFO
+    depends_on:
+      db:
+        condition: service_healthy
+
+  db:
+    image: postgres:16-alpine
+    environment:
+      POSTGRES_USER: forex
+      POSTGRES_PASSWORD: forex
+      POSTGRES_DB: forex_intelligence
+    ports:
+      - "5432:5432"
+    volumes:
+      - forex_postgres_data:/var/lib/postgresql/data
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U forex -d forex_intelligence"]
+      interval: 5s
+      timeout: 5s
+      retries: 5
+
+volumes:
+  forex_postgres_data:
