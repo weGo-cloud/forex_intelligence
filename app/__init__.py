@@ -1,0 +1,1 @@
+"""Forex Intelligence application package."""
